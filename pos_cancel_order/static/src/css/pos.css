@@ -1,0 +1,148 @@
+/*Product Line widget*/
+
+.pos .productlist-screen .order-product-list{
+    font-size: 16px;
+    width: 100%;
+    line-height: 40px;
+}
+
+.pos .productlist-screen .order-product-list th,
+.pos .productlist-screen .order-product-list td {
+    padding: 0px 8px;
+}
+.pos .productlist-screen .order-product-list tr{
+    transition: all 150ms linear;
+    background: rgb(230,230,230);
+}
+.pos .productlist-screen .order-product-list thead > tr,
+.pos .productlist-screen .order-product-list tr:nth-child(even) {
+    background: rgb(247,247,247);
+}
+.pos .productlist-screen .order-product-list tr.highlight{
+    transition: all 150ms linear;
+    background: rgb(110,200,155) !important;
+    color: white;
+}
+.pos .productlist-screen .order-product-list tr.lowlight{
+    transition: all 150ms linear;
+    background: rgb(216, 238, 227);
+}
+.pos .productlist-screen .order-product-list tr.lowlight:nth-child(even){
+    transition: all 150ms linear;
+    background: rgb(227, 246, 237);
+}
+
+/*.pos .productlist-screen .discount-details{*/
+    /*padding: 16px;*/
+    /*border-bottom: solid 5px rgb(110,200,155);*/
+/*}*/
+/*.pos .productlist-screen .discount-picture{*/
+    /*height: 64px;*/
+    /*width: 64px;*/
+    /*border-radius: 32px;*/
+    /*overflow: hidden;*/
+    /*text-align: center;*/
+    /*float: left;*/
+    /*margin-right: 16px;*/
+    /*background: white;*/
+    /*position: relative;*/
+/*}*/
+/*.pos .productlist-screen .discount-picture > img {*/
+    /*position: absolute;*/
+    /*top: -9999px;*/
+    /*bottom: -9999px;*/
+    /*right: -9999px;*/
+    /*left: -9999px;*/
+    /*max-height: 64px;*/
+    /*margin: auto;*/
+/*}*/
+/*.pos .productlist-screen .discount-picture > .fa {*/
+    /*line-height: 64px;*/
+    /*font-size: 32px;*/
+/*}*/
+/*.pos .productlist-screen .discount-picture .image-uploader {*/
+    /*position: absolute;*/
+    /*z-index: 1000;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*opacity: 0;*/
+    /*cursor: pointer;*/
+/*}*/
+/*.pos .productlist-screen .discount-name {*/
+    /*font-size: 32px;*/
+    /*line-height: 64px;*/
+    /*margin-bottom:16px;*/
+/*}*/
+/*.pos .productlist-screen .edit-buttons {*/
+    /*position: absolute;*/
+    /*right: 16px;*/
+    /*top: 10px;*/
+/*}*/
+/*.pos .productlist-screen .edit-buttons .button{*/
+    /*display: inline-block;*/
+    /*margin-left: 16px;*/
+    /*color: rgb(128,128,128);*/
+    /*cursor: pointer;*/
+    /*font-size: 36px;*/
+/*}*/
+/*.pos .productlist-screen .discount-details-box{*/
+    /*position: relative;*/
+    /*font-size: 16px;*/
+/*}*/
+/*.pos .productlist-screen .discount-details-left{*/
+    /*width: 50%;*/
+    /*float: left;*/
+/*}*/
+/*.pos .productlist-screen .discount-details-right{*/
+    /*width: 50%;*/
+    /*float: right;*/
+/*}*/
+/*.pos .productlist-screen .discount-detail{*/
+    /*line-height: 24px;*/
+/*}*/
+/*.pos .productlist-screen .discount-detail > .label{*/
+    /*font-weight: bold;*/
+    /*display: inline-block;*/
+    /*width: 75px;*/
+    /*text-align: right;*/
+    /*margin-right: 8px;*/
+/*}*/
+/*.pos .productlist-screen .discount-details input,*/
+/*.pos .productlist-screen .discount-details select*/
+/*{*/
+    /*padding: 4px;*/
+    /*border-radius: 3px;*/
+    /*border: solid 1px #cecbcb;*/
+    /*margin-bottom: 4px;*/
+    /*background: white;*/
+    /*font-family: "Lato","Lucida Grande", Helvetica, Verdana, Arial;*/
+    /*color: #555555;*/
+    /*width: 340px;*/
+    /*font-size: 14px;*/
+    /*box-sizing: border-box;*/
+/*}*/
+/*.pos .productlist-screen .discount-details input.discount-name {*/
+    /*font-size: 24px;*/
+    /*line-height: 24px;*/
+    /*margin: 18px 6px;*/
+    /*width: 340px;*/
+/*}*/
+/*.pos .productlist-screen .discount-detail > .empty{*/
+    /*opacity: 0.3;*/
+/*}*/
+/*.pos .productlist-screen .searchbox{*/
+    /*right: auto;*/
+    /*margin-left: -90px;*/
+    /*margin-top:8px;*/
+    /*left: 50%;*/
+/*}*/
+/*.pos .productlist-screen .searchbox input{*/
+    /*width: 120px;*/
+/*}*/
+/*.pos .order .summary .line .discount{*/
+    /*font-size: 16px;*/
+    /*font-weight: normal;*/
+    /*text-align: center;*/
+/*}*/
