@@ -18,8 +18,6 @@
     "external_dependencies": {"python": [], "bin": []},
     "data": [
         'views/template.xml',
-        # 'views/view.xml',
-        # 'security/ir.model.access.csv',
     ],
     'qweb': [
         'static/src/xml/cancel_order.xml',

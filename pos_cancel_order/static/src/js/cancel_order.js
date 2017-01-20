@@ -1,12 +1,9 @@
 odoo.define('pos_cancel_order.cancel_order', function (require) {
     "use strict";
 
-    // var PopupWidget = require('point_of_sale.popups');
     var models = require('point_of_sale.models');
     var screens = require('point_of_sale.screens');
     var gui = require('point_of_sale.gui');
-    // var Model = require('web.Model');
-    // var Widget = require('web.Widget');
     var core = require('web.core');
     var multiprint = require('pos_restaurant.multiprint');
     var PosBaseWidget = require('point_of_sale.BaseWidget');
@@ -54,7 +51,6 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
     screens.define_action_button({
         'name': 'order_cancel',
         'widget': OrderCancelButton,
-        // 'condition': true,
     });
 
     var _super_order = models.Order.prototype;
@@ -67,59 +63,31 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
             });
             if (reason) {
                 this.reason_order = reason;
+            } else {
+                this.reason_order = null;
             }
-            // this.CanceledProducts = true;
             this.printChanges();
-            // this.trigger('change',this);
             this.saveChanges();
-            // this.CanceledProducts = false;
-
         },
-        // saveChanges: function(){
-        //     console.log("this.saved_resume", this.saved_resume);
-        //     this.old_saved_resume = this.saved_resume;
-        //     this.saved_resume = this.build_line_resume();
-        //     console.log("this.saved_resume", this.saved_resume);
-        //     if (this.opened_cancel_widget_screen) {
-        //         this.trigger('change',this);
-        //     } else {
-        //         _super_order.saveChanges.call(this, arguments);
-        //     }
-        //
-        // },
+        saveChanges: function(){
+            var self = this;
+            if (this.opened_cancel_widget_screen) {
+                var mp_dirty_status = true;
+                var not_printed_lines = this.get_printed_order_lines(mp_dirty_status);
+                this.trigger('change',this);
+                this.saved_resume = this.build_line_resume();
+                not_printed_lines.forEach(function (item) {
+                    delete self.saved_resume[item.id];
+                });
+                this.trigger('change',this);
+            } else {
+                _super_order.saveChanges.call(this, arguments);
+            }
+        },
         computeChanges: function(categories){
             var res = _super_order.computeChanges.apply(this, arguments);
             res.reason = this.reason_order;
-            // if (this.CanceledProducts) {
-            //     res.new = [];
-            // } else {
-            //     res.cancelled = [];
-            // }
             return res;
-
-
-        //     if (res.new.length>0) {
-        //         this.res_new = res.new;
-        //     }
-        //
-        //     if (this.opened_cancel_widget_screen) {
-        //         if (res.cancelled.length>0){
-        //             res.new = [];
-        //         } else {
-        //             res.new = self.res_new;
-        //         }
-        //     } else {
-        //         if (self.res_new && self.res_new.length>0) {
-        //             res.new = self.res_new;
-        //         }
-        //     }
-        //
-        //     console.log("---------------");
-        //     console.log(this.opened_cancel_widget_screen);
-        //     console.log(res);
-        //     console.log("new", this.res_new);
-        //     console.log("---------------");
-        //     return res
         },
         export_as_JSON: function(){
             var json = _super_order.export_as_JSON.apply(this,arguments);
@@ -130,10 +98,10 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
             _super_order.init_from_JSON.apply(this,arguments);
             this.сancel_button_available = json.сancel_button_available;
         },
-        get_printed_order_lines: function() {
+        get_printed_order_lines: function(mp_dirty_status) {
             var lines = this.get_orderlines();
             lines = lines.filter(function(line){
-                return line.mp_dirty === false;
+                return line.mp_dirty === mp_dirty_status;
             });
             var printers = this.pos.printers;
             var categories_ids = [];
@@ -185,28 +153,21 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
             this._super();
             this.selected_lines_id = [];
             this.details_visible = false;
-
-
             this.renderElement();
-
             var order = this.pos.get_order();
             order.opened_cancel_widget_screen = true;
-
             this.$('.back').click(function(){
                 order.opened_cancel_widget_screen = false;
                 self.gui.back();
             });
-
             this.$('.next').click(function(){
                 self.save_changes();
                 order.opened_cancel_widget_screen = false;
                 self.gui.back();
             });
-
-            var lines = this.pos.get_order().get_printed_order_lines();
-
+            var mp_dirty_status = false;
+            var lines = this.pos.get_order().get_printed_order_lines(mp_dirty_status);
             this.render_list(lines);
-
             this.$('.order-product-list-contents').delegate('.product-line','click',function(event){
                 self.line_select(event,$(this),parseInt($(this).data('id')));
             });
@@ -319,9 +280,9 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
         update_summary: function(){
             this._super();
             var buttons = this.getParent().action_buttons;
-            this.pos.get_order().get_printed_order_lines();
+            var mp_dirty_status = false;
+            this.pos.get_order().get_printed_order_lines(mp_dirty_status);
             var сancel_button_available = this.pos.get_order().сancel_button_available;
-
             if (buttons && buttons.order_cancel ) {
                 buttons.order_cancel.highlight(сancel_button_available);
             }
