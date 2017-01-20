@@ -8,7 +8,7 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
     // var Model = require('web.Model');
     // var Widget = require('web.Widget');
     var core = require('web.core');
-    // var PosDiscountWidget = require('pos_discount.pos_discount');
+    var multiprint = require('pos_restaurant.multiprint');
     var PosBaseWidget = require('point_of_sale.BaseWidget');
     var QWeb = core.qweb;
     var _t = core._t;
@@ -20,7 +20,8 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
             if (this.gui && this.gui.screen_instances.products && this.gui.screen_instances.products.action_buttons.submit_order) {
                 this.gui.screen_instances.products.action_buttons.submit_order.button_click = function() {
                     var order = this.pos.get_order();
-                    if(order.hasChangesToPrint()){
+                    var hasChangesToPrint = order.hasChangesToPrint();
+                    if(hasChangesToPrint){
                         order.сancel_button_available = true;
                         order.printChanges();
                         order.saveChanges();
@@ -58,27 +59,67 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
 
     var _super_order = models.Order.prototype;
     models.Order = models.Order.extend({
-        printCanceledProducts: function(lines){
+        printCanceledProducts: function(lines, reason){
             var self = this;
+            this.saved_resume = this.build_line_resume();
             lines.forEach(function(line){
                 self.remove_orderline(line);
             });
+            if (reason) {
+                this.reason_order = reason;
+            }
+            // this.CanceledProducts = true;
             this.printChanges();
+            // this.trigger('change',this);
             this.saveChanges();
+            // this.CanceledProducts = false;
+
         },
+        // saveChanges: function(){
+        //     console.log("this.saved_resume", this.saved_resume);
+        //     this.old_saved_resume = this.saved_resume;
+        //     this.saved_resume = this.build_line_resume();
+        //     console.log("this.saved_resume", this.saved_resume);
+        //     if (this.opened_cancel_widget_screen) {
+        //         this.trigger('change',this);
+        //     } else {
+        //         _super_order.saveChanges.call(this, arguments);
+        //     }
+        //
+        // },
         computeChanges: function(categories){
-            console.log("66");
-            var self = this;
-            /* тут функция нужна для того чтобы только отмененные заказы отправлять на печать
-            а линии которые ранее не были отправлены на печать не трогать
-            НЕОБХОДИМО ПРОВЕРИТЬ НА РАБОТОСПОСОБНОСТЬ ДАННОЙ ФУНКЦИИ
-            */
-            // var res = _super_order.computeChanges.apply(this, arguments);
-            // if (this.opened_cancel_widget_screen) {
+            var res = _super_order.computeChanges.apply(this, arguments);
+            res.reason = this.reason_order;
+            // if (this.CanceledProducts) {
             //     res.new = [];
+            // } else {
+            //     res.cancelled = [];
             // }
-            // console.log("computeChanges");
-            // return res
+            return res;
+
+
+        //     if (res.new.length>0) {
+        //         this.res_new = res.new;
+        //     }
+        //
+        //     if (this.opened_cancel_widget_screen) {
+        //         if (res.cancelled.length>0){
+        //             res.new = [];
+        //         } else {
+        //             res.new = self.res_new;
+        //         }
+        //     } else {
+        //         if (self.res_new && self.res_new.length>0) {
+        //             res.new = self.res_new;
+        //         }
+        //     }
+        //
+        //     console.log("---------------");
+        //     console.log(this.opened_cancel_widget_screen);
+        //     console.log(res);
+        //     console.log("new", this.res_new);
+        //     console.log("---------------");
+        //     return res
         },
         export_as_JSON: function(){
             var json = _super_order.export_as_JSON.apply(this,arguments);
@@ -205,7 +246,8 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
                     return line.id == line_id;
                 }));
             });
-            order.printCanceledProducts(cancelled_lines);
+            var CancellationReason = this.$('.cancellation-reason-contents .cancellation-reason-details textarea');
+            order.printCanceledProducts(cancelled_lines, CancellationReason.val());
         },
         toggle_save_button: function(){
             var $button = this.$('.button.next');
@@ -235,19 +277,16 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
             this.toggle_save_button();
         },
         display_note: function(visibility, clickpos){
-            console.log(visibility);
             var self = this;
             var contents = this.$('.cancellation-reason-contents');
             var parent   = this.$('.order-product-list').parent();
             var scroll   = parent.scrollTop();
             var height   = contents.height();
             if(visibility === 'show'){
-                // contents.empty();
-                // contents.append($(QWeb.render('ClientDetails',{widget:this,partner:partner})));
-
                 var new_height   = contents.height();
-
                 if(!this.details_visible){
+                    contents.empty();
+                    contents.append($(QWeb.render('CancellationReason',{widget:this})));
                     if(clickpos < scroll + new_height + 20 ){
                         parent.scrollTop( clickpos - 20 );
                     }else{
@@ -256,7 +295,6 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
                 }else{
                     parent.scrollTop(parent.scrollTop() - height + new_height);
                 }
-
                 this.details_visible = true;
             } else if (visibility === 'hide') {
                 contents.empty();
@@ -280,10 +318,9 @@ odoo.define('pos_cancel_order.cancel_order', function (require) {
     screens.OrderWidget.include({
         update_summary: function(){
             this._super();
-            var сancel_button_available = this.pos.get_order().сancel_button_available;
             var buttons = this.getParent().action_buttons;
-
             this.pos.get_order().get_printed_order_lines();
+            var сancel_button_available = this.pos.get_order().сancel_button_available;
 
             if (buttons && buttons.order_cancel ) {
                 buttons.order_cancel.highlight(сancel_button_available);
