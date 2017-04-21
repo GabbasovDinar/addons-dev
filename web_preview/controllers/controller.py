@@ -20,7 +20,7 @@ class Controller(Binary):
             response = request.not_found()
         else:
             content_base64 = base64.b64decode(content)
-            headers.append(('Content-Disposition', 'inline; filename='+str(filename)+'.pdf'))
+            headers.append(('Content-Disposition', 'inline; filename=%s.pdf' % str(filename)))
             response = request.make_response(content_base64, headers)
 
         response.status_code = status
