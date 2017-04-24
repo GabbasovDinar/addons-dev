@@ -22,25 +22,31 @@ odoo.define('media_form_widget', function(require) {
         render_value: function() {
             this.media_id = this.view.datarecord.id;
             if (this.media && (this.media_type == 'video/url' ||
-                this.media_type == 'application/pdf' ||
-                this.media_type == 'application/octet-stream')) {
+                (this.media_type && this.media_type.split("/")[0] == 'application') ||
+                this.media_type == 'application/msword')) {
                 var url = "/web/static/src/img/mimetypes/document.png";
                 if (this.media_type == 'video/url') {
-                    var url = "/web/static/src/img/mimetypes/video.png";
+                    url = "/web/static/src/img/mimetypes/video.png";
                     if (this.media_video_service == 'youtube') {
                         url = "/web_preview/static/src/img/youtube.png";
                     } else if (this.media_video_service == 'vimeo') {
                         url = "/web_preview/static/src/img/vimeo.png";
                     }
                 } else if (this.media_type == 'application/pdf') {
-                    var url = "/web_preview/static/src/img/pdf.png";
-                    this.pdf_url = session.url('/web/pdf', {
-                        model: this.view.dataset.model,
-                        id: JSON.stringify(this.view.datarecord.id),
-                        field: this.name,
-                        filename: this.view.datarecord.display_name,
-                        unique: (this.view.datarecord.__last_update || '').replace(/[^0-9]/g, ''),
-                    });
+                    url = "/web_preview/static/src/img/pdf.png";
+                    this.pdf_url = this.get_media_url('/web/pdf');
+                } else if (this.media_type == 'application/msword') {
+                    url = "/web_preview/static/src/img/doc.png";
+                    this.msword_url = this.get_media_url('/web/doc');
+                } else if (this.media_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                    url = "/web_preview/static/src/img/xlsx.png";
+                    this.xlsx_url = this.get_media_url('/web/xlsx');
+                } else if (this.media_type == 'application/vnd.ms-excel') {
+                    url = "/web_preview/static/src/img/xls.png";
+                    this.xls_url = this.get_media_url('/web/xls');
+                } else if (this.media_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                    url = "/web_preview/static/src/img/docx.png";
+                    this.docx_url = this.get_media_url('/web/docx');
                 } else {
                     this.do_warn(_t("Document"), _t("Could not display the selected document."));
                 }
@@ -59,17 +65,39 @@ odoo.define('media_form_widget', function(require) {
             this.media_type = content_type;
             this._super(size, name, content_type, file_base64);
         },
+        get_media_url: function(request) {
+            return session.url(request, {
+                model: this.view.dataset.model,
+                id: JSON.stringify(this.view.datarecord.id),
+                field: this.name,
+                filename: this.view.datarecord.display_name,
+                unique: (this.view.datarecord.__last_update || '').replace(/[^0-9]/g, ''),
+            });
+        },
     });
 
-    // KanbanRecord.include({
-    //     kanban_image: function(model, field, id, cache, options) {
-    //         console.log("this",this);
-    //         var model = new Model(model);
-    //         model.call('name_search', [this.id]).then(function(res) {
-    //             console.log("qwerty nigga",res)
-    //         })
-    //         return this._super(model, field, id, cache, options);
-    //
-    //     },
-    // });
+    KanbanRecord.include({
+        kanban_image: function(model, field, id, cache, options) {
+            if (this.values.media_type && this.values.media_type.value == "application/pdf") {
+                return "/web_preview/static/src/img/pdf.png";
+            } else if(this.values.media_type && this.values.media_type.value == "application/msword") {
+                return "/web_preview/static/src/img/doc.png";
+            } else if(this.values.media_type && this.values.media_type.value == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                return "/web_preview/static/src/img/docx.png";
+            } else if(this.values.media_type && this.values.media_type.value == 'application/vnd.ms-excel') {
+                return "/web_preview/static/src/img/xls.png";
+            } else if(this.values.media_type && this.values.media_type.value == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                return "/web_preview/static/src/img/xlsx.png";
+            } else if (this.values.media_video_service && this.values.media_video_service.value) {
+                var video = this.values.media_video_service.value;
+                if (video == 'youtube') {
+                    return "/web_preview/static/src/img/youtube.png";
+                }
+                if (video == 'vimeo') {
+                    return "/web_preview/static/src/img/vimeo.png";
+                }
+            }
+            return this._super(model, field, id, cache, options);
+        },
+    });
 });

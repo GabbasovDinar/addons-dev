@@ -10,7 +10,7 @@ Installation
 Configuration
 =============
 
-* go to
+*
 
 Usage
 =====

@@ -35,6 +35,38 @@
                          t-att-border="1"/>
                 </a>
             </t>
+            <!--DOC-->
+            <t t-if="widget.media_type=='application/msword'">
+                <a t-att-href='widget.msword_url' target="_blank">
+                    <img class="img img-responsive media-image m-dotted"
+                         t-att-src='url'
+                         t-att-border="1"/>
+                </a>
+            </t>
+            <!--DOCX-->
+            <t t-if="widget.media_type=='application/vnd.openxmlformats-officedocument.wordprocessingml.document'">
+                <a t-att-href='widget.docx_url' target="_blank">
+                    <img class="img img-responsive media-image m-dotted"
+                         t-att-src='url'
+                         t-att-border="1"/>
+                </a>
+            </t>
+            <!--XLS-->
+            <t t-if="widget.media_type=='application/vnd.ms-excel'">
+                <a t-att-href='widget.xls_url' target="_blank">
+                    <img class="img img-responsive media-image m-dotted"
+                         t-att-src='url'
+                         t-att-border="1"/>
+                </a>
+            </t>
+            <!--XLSX-->
+            <t t-if="widget.media_type=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'">
+                <a t-att-href='widget.xlsx_url' target="_blank">
+                    <img class="img img-responsive media-image m-dotted"
+                         t-att-src='url'
+                         t-att-border="1"/>
+                </a>
+            </t>
             <!--IMAGE-->
             <t t-if="!widget.media_type or (widget.media_type and widget.media_type=='image')">
                 <img class="img img-responsive media-image m-dotted"

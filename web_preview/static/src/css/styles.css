@@ -25,3 +25,6 @@
 .img.img-responsive.media-image.m-dotted.media-video {
     box-shadow: none !important;
 }
+.o_image {
+    background-image: none!important;
+}
