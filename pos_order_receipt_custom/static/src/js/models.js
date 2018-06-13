@@ -124,6 +124,32 @@ odoo.define('pos_order_receipt_custom.models', function (require) {
             printer.print(receipt);
             this.first_order_printing = false;
         },
+        get_string_array_by_len: function(len, str, s) {
+            //  len - the maximum number of characters
+            //  str - text to be divided
+            //  s - division symbol (default value  ' ')
+            s = s || ' ';
+            var temp = "";
+            var arr = [];
+            var temp_arr = [];
+            str = str.split(s);
+            str.forEach(function(item, index) {
+                temp += item;
+                if (temp.length < len) {
+                    temp_arr.push(item);
+                } else {
+                    arr.push(temp_arr.join(" "));
+                    temp_arr = [];
+                    temp = '';
+                    temp_arr.push(item);
+                }
+
+                if (index + 1 === str.length && temp_arr.length) {
+                    arr.push(temp_arr.join(" "));
+                }
+            });
+            return arr;
+        },
         export_as_JSON: function(){
             var json = _super_order.export_as_JSON.call(this);
             json.first_order_printing = this.first_order_printing;
