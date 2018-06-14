@@ -210,49 +210,89 @@
                         </line>
                         <t t-call="NameWrapped"/>
                         <!--For compatibility with the https://www.odoo.com/apps/modules/10.0/pos_order_note/ module-->
+
                         <t t-if="change.note and !change.custom_notes">
                             <t t-set="notes" t-value="widget.get_string_array_by_len(40, '---'+change.note)"/>
                             <t t-foreach="notes" t-as="note">
                                 <t t-if="note_first">
-                                    <pre align='right'> <t t-esc="note" />    </pre>
+                                    <pre align='right'><t t-esc="note" />    </pre>
                                 </t>
                                 <t t-if="!note_first">
-                                    <pre align='left'>    <t t-esc="note" /> </pre>
+                                    <pre align='left'>    <t t-esc="note" /></pre>
                                 </t>
                             </t>
                         </t>
 
                         <t t-if="!change.note and change.custom_notes">
-                            <div align='right'><t t-foreach="change.custom_notes" t-as="custom_note"><t t-if="custom_note_first">    ---</t><t t-esc="custom_note.name" /><t t-if="!custom_note_last">, </t></t>    </div>
+                            <t t-set="str_notes" t-value="widget.get_custom_notes_as_string(change.custom_notes)"/>
+                            <t t-set="notes" t-value="widget.get_string_array_by_len(40, '---'+str_notes)"/>
+                            <t t-foreach="notes" t-as="note">
+                                <t t-if="note_first">
+                                    <pre align='right'><t t-esc="note" />    </pre>
+                                </t>
+                                <t t-if="!note_first">
+                                    <pre align='left'>    <t t-esc="note" /></pre>
+                                </t>
+                            </t>
                         </t>
+
                         <t t-if="change.note and change.custom_notes">
-                            <div align='right'>    ---<t t-esc="change.note" /> <t t-foreach="change.custom_notes" t-as="custom_note"><t t-esc="custom_note.name" /><t t-if="!custom_note_last">, </t></t>    </div>
+                            <t t-set="str_notes" t-value="widget.get_custom_notes_as_string(change.custom_notes)"/>
+                            <t t-set="notes" t-value="widget.get_string_array_by_len(40, '---'+change.note+' '+str_notes)"/>
+                            <t t-foreach="notes" t-as="note">
+                                <t t-if="note_first">
+                                    <pre align='right'><t t-esc="note" />    </pre>
+                                </t>
+                                <t t-if="!note_first">
+                                    <pre align='left'>    <t t-esc="note" /></pre>
+                                </t>
+                            </t>
                         </t>
+
                     </div>
                     <br/>
                 </t>
                 <!--For compatibility with the https://www.odoo.com/apps/modules/10.0/pos_order_note/ module-->
                 <div size="double-height">
-                    <t t-if="changes.order_note">
-                        <line>
-                            <left>Order Note</left>
-                            <right>--- <t t-esc="changes.order_note" /></right>
-                        </line>
-                    </t>
-                    <t t-if="changes.order_custom_notes">
-                        <t t-if="!changes.order_note">
-                            <line>
-                                <left>Order Note</left>
-                                <right></right>
-                            </line>
-                        </t>
-                        <t t-foreach="changes.order_custom_notes" t-as="custom_note">
-                            <line>
-                                <left></left>
-                                <right>--- <t t-esc="custom_note.name" /></right>
-                            </line>
+
+                    <t t-if="changes.order_note and !changes.order_custom_notes">
+                        <t t-set="notes" t-value="widget.get_string_array_by_len(40, 'Order note: ---'+changes.order_note)"/>
+                        <t t-foreach="notes" t-as="note">
+                            <t t-if="note_first">
+                                <pre align='right'><t t-esc="note" />    </pre>
+                            </t>
+                            <t t-if="!note_first">
+                                <pre align='left'>    <t t-esc="note" /></pre>
+                            </t>
                         </t>
                     </t>
+
+                    <t t-if="!changes.order_note and changes.order_custom_notes">
+                        <t t-set="str_notes" t-value="widget.get_custom_notes_as_string(changes.order_custom_notes)"/>
+                        <t t-set="notes" t-value="widget.get_string_array_by_len(40, 'Order note: ---'+str_notes)"/>
+                        <t t-foreach="notes" t-as="note">
+                            <t t-if="note_first">
+                                <pre align='right'><t t-esc="note" />    </pre>
+                            </t>
+                            <t t-if="!note_first">
+                                <pre align='left'>    <t t-esc="note" /></pre>
+                            </t>
+                        </t>
+                    </t>
+
+                    <t t-if="changes.order_note and changes.order_custom_notes">
+                        <t t-set="str_notes" t-value="widget.get_custom_notes_as_string(changes.order_custom_notes)"/>
+                        <t t-set="notes" t-value="widget.get_string_array_by_len(40, 'Order note: ---'+changes.order_note+str_notes)"/>
+                        <t t-foreach="notes" t-as="note">
+                            <t t-if="note_first">
+                                <pre align='right'><t t-esc="note" />    </pre>
+                            </t>
+                            <t t-if="!note_first">
+                                <pre align='left'>    <t t-esc="note" /></pre>
+                            </t>
+                        </t>
+                    </t>
+
                 </div>
                 <br />
                 <div>==============================================</div>

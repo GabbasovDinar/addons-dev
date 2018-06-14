@@ -124,6 +124,16 @@ odoo.define('pos_order_receipt_custom.models', function (require) {
             printer.print(receipt);
             this.first_order_printing = false;
         },
+        get_custom_notes_as_string: function(notes) {
+            var str_notes = '';
+            notes.forEach(function(note, index){
+                str_notes += note.name;
+                if (index + 1 !== notes.length) {
+                    str_notes += ', ';
+                }
+            });
+            return str_notes;
+        },
         get_string_array_by_len: function(len, str, s) {
             //  len - the maximum number of characters
             //  str - text to be divided
@@ -134,16 +144,15 @@ odoo.define('pos_order_receipt_custom.models', function (require) {
             var temp_arr = [];
             str = str.split(s);
             str.forEach(function(item, index) {
-                temp += item;
-                if (temp.length < len) {
+                temp += item+' ';
+                if (temp.length <= len) {
                     temp_arr.push(item);
                 } else {
                     arr.push(temp_arr.join(" "));
                     temp_arr = [];
-                    temp = '';
+                    temp = item;
                     temp_arr.push(item);
                 }
-
                 if (index + 1 === str.length && temp_arr.length) {
                     arr.push(temp_arr.join(" "));
                 }
