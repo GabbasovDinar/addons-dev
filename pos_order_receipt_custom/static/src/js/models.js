@@ -65,6 +65,7 @@ odoo.define('pos_order_receipt_custom.models', function (require) {
                     'custom_notes': line.custom_notes,
                     'qty':      line.quantity,
                     'line_id':  line.id,
+                    'unit':     line.get_unit().name,
                 });
             });
             return products;
